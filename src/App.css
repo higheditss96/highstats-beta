@@ -1,38 +1,234 @@
-.App {
-  text-align: center;
+/* ===== GENERAL ===== */
+body {
+  background: radial-gradient(circle at top, #0c0c0c, #151515 80%);
+  color: #e0e0e0;
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* ===== HEADER ===== */
+.header {
+  font-size: 1.8rem;
+  font-weight: 700;
+  padding: 1.5rem 2rem;
+  color: #cfcfcf;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.06);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* ===== CONTAINER ===== */
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3rem;
+  padding: 2rem;
+  flex-wrap: wrap;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* ===== CARD STYLE (negru + gri cu glow discret) ===== */
+.card {
+  background: linear-gradient(180deg, #121212, #181818);
+  padding: 2rem;
+  border-radius: 20px;
+  border: 1px solid rgba(50, 50, 50, 0.7);
+  box-shadow:
+    6px 6px 14px rgba(0, 0, 0, 0.7),
+    -4px -4px 10px rgba(60, 60, 60, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+.card:hover {
+  box-shadow:
+    8px 8px 20px rgba(0, 0, 0, 0.8),
+    -4px -4px 15px rgba(80, 80, 80, 0.15);
+  transform: translateY(-3px);
+}
+
+/* ===== EGALARE CARDURI ===== */
+.same-size {
+  width: 380px;
+  height: 540px;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* ===== SEARCH BAR PROPORȚIONAT ===== */
+.search-container {
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  gap: 0.7rem;
+  margin-bottom: 1.5rem;
 }
 
-.App-link {
-  color: #61dafb;
+.input.small {
+  flex: 1;
+  background: #171717;
+  color: #f1f1f1;
+  border: 1px solid #292929;
+  border-radius: 10px;
+  padding: 0.8rem 1.1rem;
+  font-size: 1rem;
+  width: 75%;
+  transition: 0.3s;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.input.small:focus {
+  outline: none;
+  border-color: #555;
+  box-shadow: 0 0 8px rgba(100, 100, 100, 0.4);
+}
+
+.search-btn.small {
+  background: linear-gradient(180deg, #1f1f1f, #282828);
+  border: 1px solid #353535;
+  border-radius: 10px;
+  padding: 0.8rem 1.4rem;
+  font-size: 1rem;
+  color: #eaeaea;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.search-btn.small:hover {
+  background: linear-gradient(180deg, #2a2a2a, #333);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.08);
+}
+
+/* ===== PRESET BUTTONS ===== */
+.presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+
+.preset-btn {
+  background: #191919;
+  border: 1px solid #2d2d2d;
+  color: #bcbcbc;
+  border-radius: 8px;
+  padding: 0.45rem 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.preset-btn:hover {
+  background: #222;
+  color: #fff;
+}
+
+.preset-btn.active {
+  background: #242424;
+  border: 1px solid #4c4c4c;
+  color: #00ffaa;
+  box-shadow: inset 0 0 10px rgba(80, 80, 80, 0.3);
+}
+
+/* ===== PROFILE PICTURE ===== */
+.profile-pic {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px solid #303030;
+  object-fit: cover;
+  margin: 20px auto;
+  display: block;
+  box-shadow:
+    inset 0 0 6px rgba(255, 255, 255, 0.08),
+    0 0 25px rgba(0, 0, 0, 0.6);
+}
+
+/* ===== USER INFO ===== */
+.preview-box {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.preview-username {
+  font-weight: 600;
+  color: #9b9b9b;
+  margin-top: 0.5rem;
+}
+
+.preview-followers {
+  font-size: 2.6rem;
+  font-weight: 900;
+  margin: 0.3rem 0;
+  color: #efefef;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
+}
+
+.preview-sub {
+  color: #8f8f8f;
+  font-size: 0.9rem;
+}
+
+/* ===== DROPDOWN + COLOR PICKER ===== */
+.dropdown,
+.color-picker {
+  background: #171717;
+  border: 1px solid #2e2e2e;
+  border-radius: 10px;
+  color: #dcdcdc;
+  padding: 0.6rem 1rem;
+  width: 100%;
+  margin-bottom: 1rem;
+  transition: all 0.2s;
+}
+
+.dropdown:hover,
+.color-picker:hover {
+  border-color: #555;
+}
+
+/* ===== GENERATE BUTTON ===== */
+.generate-btn {
+  background: linear-gradient(180deg, #202020, #2a2a2a);
+  border: 1px solid #3b3b3b;
+  border-radius: 10px;
+  padding: 0.9rem 1.2rem;
+  color: #f5f5f5;
+  width: 100%;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 1rem;
+}
+
+.generate-btn:hover {
+  background: linear-gradient(180deg, #2a2a2a, #363636);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  text-align: left;
+  padding: 1rem 2rem;
+  font-size: 0.9rem;
+  color: #a0a0a0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.footer-link {
+  color: #00ffaa;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.footer-emoji {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+}
+.user-card {
+  width: 340px;
+  min-height: 750px;  /* ← fă-l mai lung */
 }

@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import MainRoutes from "./Routes";
+import Overlay from "./Overlay";
 import "./index.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <MainRoutes />
+    <Overlay />
   </React.StrictMode>
 );
