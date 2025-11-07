@@ -33,13 +33,14 @@ function App() {
   }, []);
 
   const handleOverlayOpen = () => {
-    const overlayUrl = `http://localhost:3001?user=${username}&color=${encodeURIComponent(
-      color
-    )}&font=${encodeURIComponent(
-      font
-    )}&useGoal=${useGoal}&goal=${goal}&showPfp=${showPfp}`;
-    window.open(overlayUrl, "_blank");
-  };
+  const overlayUrl = `https://highstatsss-overlay.vercel.app/?user=${username}&color=${encodeURIComponent(
+    color
+  )}&font=${encodeURIComponent(
+    font
+  )}&useGoal=${useGoal}&goal=${goal}&showPfp=${showPfp}`;
+  window.open(overlayUrl, "_blank");
+};
+
 
   return (
     <div className="App">
