@@ -11,7 +11,7 @@ function Main() {
 
   const openOverlay = () => {
     const params = new URLSearchParams({
-      user: username,
+      user: username || "hyghman",
       color,
       font,
       useGoal,
@@ -19,13 +19,14 @@ function Main() {
       showPfp,
     });
 
-    // deschide overlay-ul pe același domeniu (merge și pe Vercel)
     window.open(`${window.location.origin}/overlay?${params.toString()}`, "_blank");
   };
 
   return (
     <div className="App">
-      <h1>HIGHSTATS <span className="beta-tag">beta</span></h1>
+      <h1>
+        HIGHSTATS <span className="beta-tag">beta</span>
+      </h1>
 
       <div className="main-container">
         <input

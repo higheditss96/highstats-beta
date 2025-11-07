@@ -32,18 +32,14 @@ function App() {
     fetchKickUser();
   }, []);
 
-  const openOverlay = () => {
-  const params = new URLSearchParams({
-    user: username,
-    color: color,
-    font: font,
-    useGoal: useGoal,
-    goal: goal,
-    showPfp: showPfp
-  });
-  window.open(`${window.location.origin}/overlay?${params.toString()}`, '_blank');
-};
-
+  const handleOverlayOpen = () => {
+    const overlayUrl = `http://localhost:3001?user=${username}&color=${encodeURIComponent(
+      color
+    )}&font=${encodeURIComponent(
+      font
+    )}&useGoal=${useGoal}&goal=${goal}&showPfp=${showPfp}`;
+    window.open(overlayUrl, "_blank");
+  };
 
   return (
     <div className="App">
