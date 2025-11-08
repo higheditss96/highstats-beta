@@ -35,7 +35,7 @@ function App() {
   }, []);
 
   const handleOverlayOpen = () => {
-    const overlayUrl = `https://highstatss.vercel.app/overlay?user=${username}&color=${encodeURIComponent(
+    const overlayUrl = `https://highstatsss-overlay.vercel.app/?user=${username}&color=${encodeURIComponent(
       color
     )}&font=${encodeURIComponent(
       font
