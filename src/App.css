@@ -251,3 +251,36 @@ body {
   -ms-overflow-style: none;  /* pentru Internet Explorer și Edge */
   scrollbar-width: none;     /* pentru Firefox */
 }
+/* ==== RESPONSIVE DESIGN ==== */
+
+@media (max-width: 900px) {
+  .content {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 10px;
+    overflow-y: auto;
+  }
+
+  .card.same-size {
+    width: 90%;
+    max-width: 400px;
+  }
+
+  .header {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .footer {
+    font-size: 0.8rem;
+    text-align: center;
+    padding-bottom: 40px;
+  }
+
+  input,
+  select,
+  button {
+    font-size: 1rem;
+  }
+}

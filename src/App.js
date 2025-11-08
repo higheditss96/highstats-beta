@@ -3,6 +3,7 @@ import "./App.css";
 
 function App() {
   const [username, setUsername] = useState("hyghman");
+  const [typedUsername, setTypedUsername] = useState("hyghman"); // pentru input separat
   const [font, setFont] = useState("Poppins");
   const [color, setColor] = useState("#00ffaa");
   const [useGoal, setUseGoal] = useState(false);
@@ -35,7 +36,7 @@ function App() {
 
   // Open overlay on Vercel
   const handleOverlayOpen = () => {
-    const overlayUrl = `https://highstatsss-overlay.vercel.app//?user=${username}&color=${encodeURIComponent(
+    const overlayUrl = `https://highstatss-overlay.vercel.app/?user=${username}&color=${encodeURIComponent(
       color
     )}&font=${encodeURIComponent(
       font
@@ -55,12 +56,18 @@ function App() {
           <div className="search-container">
             <input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={typedUsername}
+              onChange={(e) => setTypedUsername(e.target.value)}
               className="input small"
               placeholder="Enter Kick username"
             />
-            <button className="search-btn small" onClick={() => fetchKickUser()}>
+            <button
+              className="search-btn small"
+              onClick={() => {
+                setUsername(typedUsername);
+                fetchKickUser(typedUsername);
+              }}
+            >
               Search
             </button>
           </div>
@@ -73,7 +80,8 @@ function App() {
                 className={`preset-btn ${username === user ? "active" : ""}`}
                 onClick={() => {
                   setUsername(user);
-                  fetchKickUser(user); // ✅ instant update when preset is clicked
+                  setTypedUsername(user);
+                  fetchKickUser(user); // ✅ instant load on preset
                 }}
               >
                 {user}
