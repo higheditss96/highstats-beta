@@ -3,7 +3,6 @@ import "./App.css";
 
 function App() {
   const [username, setUsername] = useState("hyghman");
-  const [searchInput, setSearchInput] = useState("hyghman"); // input separat
   const [font, setFont] = useState("Poppins");
   const [color, setColor] = useState("#00ffaa");
   const [useGoal, setUseGoal] = useState(false);
@@ -14,7 +13,7 @@ function App() {
 
   const presetUsers = ["hyghman", "anduu14", "ket_14", "godeanuu"];
 
-  // 🔍 Fetch Kick API user
+  // Fetch Kick user data
   const fetchKickUser = async (user = username) => {
     try {
       const res = await fetch(`https://kick.com/api/v1/channels/${user}`);
@@ -28,14 +27,15 @@ function App() {
     }
   };
 
-  // ⚙️ Fetch o singură dată la load (fix pentru ESLint)
+  // Run once on mount
   useEffect(() => {
     fetchKickUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Open overlay on Vercel
   const handleOverlayOpen = () => {
-    const overlayUrl = `https://highstatsss-overlay.vercel.app/?user=${username}&color=${encodeURIComponent(
+    const overlayUrl = `https://highstatss-overlay.vercel.app/?user=${username}&color=${encodeURIComponent(
       color
     )}&font=${encodeURIComponent(
       font
@@ -45,30 +45,27 @@ function App() {
 
   return (
     <div className="App">
-      <header className="header">HIGHSTATS</header>
+      <header className="header">
+        HIGHSTATS <span className="beta-tag">beta</span>
+      </header>
 
       <div className="content">
-        {/* ======= CARD 1 ======= */}
+        {/* ======= LEFT CARD ======= */}
         <div className="card same-size">
           <div className="search-container">
             <input
               type="text"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="input small"
               placeholder="Enter Kick username"
             />
-            <button
-              className="search-btn small"
-              onClick={() => {
-                setUsername(searchInput);
-                fetchKickUser(searchInput);
-              }}
-            >
+            <button className="search-btn small" onClick={() => fetchKickUser()}>
               Search
             </button>
           </div>
 
+          {/* ======= PRESET BUTTONS ======= */}
           <div className="presets">
             {presetUsers.map((user) => (
               <button
@@ -76,8 +73,7 @@ function App() {
                 className={`preset-btn ${username === user ? "active" : ""}`}
                 onClick={() => {
                   setUsername(user);
-                  setSearchInput(user);
-                  fetchKickUser(user);
+                  fetchKickUser(user); // ✅ instant update when preset is clicked
                 }}
               >
                 {user}
@@ -89,16 +85,31 @@ function App() {
             <img src={profilePic} alt="pfp" className="profile-pic" />
           )}
 
-          <div className="preview-box">
+          {/* ======= LIVE FONT PREVIEW ======= */}
+          <div
+            className="preview-box"
+            style={{
+              fontFamily: font,
+              color: color,
+              transition: "all 0.3s ease",
+            }}
+          >
             <div className="preview-username">@{username}</div>
-            <div className="preview-followers">
+            <div
+              className="preview-followers"
+              style={{
+                fontFamily: font,
+                fontWeight: 600,
+                color: color,
+              }}
+            >
               {followers.toLocaleString()}
             </div>
             <div className="preview-sub">followers</div>
           </div>
         </div>
 
-        {/* ======= CARD 2 ======= */}
+        {/* ======= RIGHT CARD ======= */}
         <div className="card same-size">
           <h2>Generate OBS Overlay</h2>
 
@@ -112,6 +123,12 @@ function App() {
             <option>Inter</option>
             <option>Roboto</option>
             <option>Outfit</option>
+            <option>Montserrat</option>
+            <option>Bebas Neue</option>
+            <option>Orbitron</option>
+            <option>Russo One</option>
+            <option>Lilita One</option>
+            <option>Oswald</option>
           </select>
 
           <label>Counter color</label>
