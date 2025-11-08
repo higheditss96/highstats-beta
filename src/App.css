@@ -232,3 +232,22 @@ body {
   width: 340px;
   min-height: 750px;  /* ← fă-l mai lung */
 }
+
+/* 🔹 Ascunde bara de scroll pe toate browserele */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* elimină scrollbarul */
+  height: 100%;
+  background-color: #000; /* păstrează fundalul */
+}
+
+/* 🔹 Dacă vrei totuși scroll, dar fără bara vizibilă */
+body::-webkit-scrollbar {
+  display: none; /* pentru Chrome, Edge, Safari */
+}
+
+body {
+  -ms-overflow-style: none;  /* pentru Internet Explorer și Edge */
+  scrollbar-width: none;     /* pentru Firefox */
+}
