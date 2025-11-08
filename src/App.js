@@ -3,6 +3,7 @@ import "./App.css";
 
 function App() {
   const [username, setUsername] = useState("hyghman");
+  const [searchInput, setSearchInput] = useState("hyghman"); // input separat
   const [font, setFont] = useState("Poppins");
   const [color, setColor] = useState("#00ffaa");
   const [useGoal, setUseGoal] = useState(false);
@@ -13,10 +14,10 @@ function App() {
 
   const presetUsers = ["hyghman", "anduu14", "ket_14", "godeanuu"];
 
-  // Function to fetch Kick user manually on Search click
-  const fetchKickUser = async () => {
+  // 🔍 Fetch Kick API user
+  const fetchKickUser = async (user = username) => {
     try {
-      const res = await fetch(`https://kick.com/api/v1/channels/${username}`);
+      const res = await fetch(`https://kick.com/api/v1/channels/${user}`);
       const data = await res.json();
       setFollowers(data.followersCount);
       setProfilePic(data.user.profile_pic);
@@ -27,37 +28,43 @@ function App() {
     }
   };
 
-  // Run search once when site loads
+  // ⚙️ Fetch o singură dată la load (fix pentru ESLint)
   useEffect(() => {
-  fetchKickUser();
-}, []);
+    fetchKickUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleOverlayOpen = () => {
-  const overlayUrl = `https://highstatsss-overlay.vercel.app/?user=${username}&color=${encodeURIComponent(
-    color
-  )}&font=${encodeURIComponent(
-    font
-  )}&useGoal=${useGoal}&goal=${goal}&showPfp=${showPfp}`;
-  window.open(overlayUrl, "_blank");
-};
-
+    const overlayUrl = `https://highstatss.vercel.app/overlay?user=${username}&color=${encodeURIComponent(
+      color
+    )}&font=${encodeURIComponent(
+      font
+    )}&useGoal=${useGoal}&goal=${goal}&showPfp=${showPfp}`;
+    window.open(overlayUrl, "_blank");
+  };
 
   return (
     <div className="App">
       <header className="header">HIGHSTATS</header>
 
       <div className="content">
-        {/* ======= LEFT CARD ======= */}
+        {/* ======= CARD 1 ======= */}
         <div className="card same-size">
           <div className="search-container">
             <input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               className="input small"
               placeholder="Enter Kick username"
             />
-            <button className="search-btn small" onClick={fetchKickUser}>
+            <button
+              className="search-btn small"
+              onClick={() => {
+                setUsername(searchInput);
+                fetchKickUser(searchInput);
+              }}
+            >
               Search
             </button>
           </div>
@@ -69,8 +76,8 @@ function App() {
                 className={`preset-btn ${username === user ? "active" : ""}`}
                 onClick={() => {
                   setUsername(user);
-                  setFollowers(0);
-                  fetchKickUser();
+                  setSearchInput(user);
+                  fetchKickUser(user);
                 }}
               >
                 {user}
@@ -91,7 +98,7 @@ function App() {
           </div>
         </div>
 
-        {/* ======= RIGHT CARD ======= */}
+        {/* ======= CARD 2 ======= */}
         <div className="card same-size">
           <h2>Generate OBS Overlay</h2>
 
