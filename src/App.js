@@ -3,9 +3,10 @@ import "./App.css";
 
 function App() {
   const [username, setUsername] = useState("hyghman");
-  const [typedUsername, setTypedUsername] = useState("hyghman"); // pentru input separat
+  const [typedUsername, setTypedUsername] = useState("hyghman");
   const [font, setFont] = useState("Poppins");
   const [color, setColor] = useState("#00ffaa");
+  const [goalColor, setGoalColor] = useState("#ffffff");
   const [useGoal, setUseGoal] = useState(false);
   const [goal, setGoal] = useState(10000);
   const [showPfp, setShowPfp] = useState(true);
@@ -28,19 +29,21 @@ function App() {
     }
   };
 
-  // Run once on mount
+  // Load initial data
   useEffect(() => {
     fetchKickUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Open overlay on Vercel
+  // Open overlay (vercel)
   const handleOverlayOpen = () => {
     const overlayUrl = `https://highstatsss-overlay.vercel.app/?user=${username}&color=${encodeURIComponent(
       color
     )}&font=${encodeURIComponent(
       font
-    )}&useGoal=${useGoal}&goal=${goal}&showPfp=${showPfp}`;
+    )}&useGoal=${useGoal}&goal=${goal}&showPfp=${showPfp}&goalColor=${encodeURIComponent(
+      goalColor
+    )}`;
     window.open(overlayUrl, "_blank");
   };
 
@@ -51,7 +54,7 @@ function App() {
       </header>
 
       <div className="content">
-        {/* ======= LEFT CARD ======= */}
+        {/* ==== LEFT CARD ==== */}
         <div className="card same-size">
           <div className="search-container">
             <input
@@ -72,7 +75,7 @@ function App() {
             </button>
           </div>
 
-          {/* ======= PRESET BUTTONS ======= */}
+          {/* Preset usernames */}
           <div className="presets">
             {presetUsers.map((user) => (
               <button
@@ -81,7 +84,7 @@ function App() {
                 onClick={() => {
                   setUsername(user);
                   setTypedUsername(user);
-                  fetchKickUser(user); // ✅ instant load on preset
+                  fetchKickUser(user);
                 }}
               >
                 {user}
@@ -89,11 +92,12 @@ function App() {
             ))}
           </div>
 
+          {/* Profile preview */}
           {showPfp && profilePic && (
             <img src={profilePic} alt="pfp" className="profile-pic" />
           )}
 
-          {/* ======= LIVE FONT PREVIEW ======= */}
+          {/* Preview area */}
           <div
             className="preview-box"
             style={{
@@ -107,17 +111,32 @@ function App() {
               className="preview-followers"
               style={{
                 fontFamily: font,
-                fontWeight: 600,
+                fontWeight: 700,
                 color: color,
               }}
             >
               {followers.toLocaleString()}
             </div>
             <div className="preview-sub">followers</div>
+
+            {useGoal && (
+              <div
+                className="preview-goal"
+                style={{
+                  marginTop: "8px",
+                  color: goalColor,
+                  fontWeight: 700,
+                  fontSize: "14px",
+                }}
+              >
+                🎯 {Math.max(goal - followers, 0).toLocaleString()} left to{" "}
+                {goal.toLocaleString()}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* ======= RIGHT CARD ======= */}
+        {/* ==== RIGHT CARD ==== */}
         <div className="card same-size">
           <h2>Generate OBS Overlay</h2>
 
@@ -166,6 +185,14 @@ function App() {
                 onChange={(e) => setGoal(Number(e.target.value))}
                 className="input"
                 min="1"
+              />
+
+              <label>Goal color</label>
+              <input
+                type="color"
+                value={goalColor}
+                onChange={(e) => setGoalColor(e.target.value)}
+                className="color-picker"
               />
             </>
           )}
