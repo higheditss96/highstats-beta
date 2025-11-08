@@ -29,8 +29,8 @@ function App() {
 
   // Run search once when site loads
   useEffect(() => {
-    fetchKickUser();
-  }, []);
+  fetchKickUser();
+}, []);
 
   const handleOverlayOpen = () => {
   const overlayUrl = `https://highstatsss-overlay.vercel.app/?user=${username}&color=${encodeURIComponent(
