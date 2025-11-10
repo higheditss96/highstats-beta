@@ -13,7 +13,7 @@ function App() {
   const [followers, setFollowers] = useState(0);
   const [profilePic, setProfilePic] = useState("");
 
-  const presetUsers = ["hyghman", "anduu14", "ket_14", "godeanuu"];
+  const presetUsers = ["hyghman", "anduu14", "ket_14", "godeanu"];
 
   // 🧩 Fix: memorăm funcția pentru ESLint + Vercel CI
   const fetchKickUser = useCallback(
