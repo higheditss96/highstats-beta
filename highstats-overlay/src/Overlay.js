@@ -1,166 +1,140 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import "./Overlay.css";
 
-function Overlay() {
+export default function Overlay() {
   const [followers, setFollowers] = useState(0);
+  const [previousFollowers, setPreviousFollowers] = useState(0);
   const [profilePic, setProfilePic] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [auraColor, setAuraColor] = useState("");
+  const [bubbles, setBubbles] = useState([]);
+  const [flash, setFlash] = useState(false);
+  const numberRef = useRef(null);
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const username = urlParams.get("user") || "hyghman";
-  const color = urlParams.get("color") || "#00ffaa";
-  const font = urlParams.get("font") || "Poppins";
-  const useGoal = urlParams.get("useGoal") === "true";
-  const goal = parseInt(urlParams.get("goal") || "10000");
-  const showPfp = urlParams.get("showPfp") === "true";
-  const goalColor = urlParams.get("goalColor") || "#ffffff";
+  // === URL PARAMS ===
+  const params = new URLSearchParams(window.location.search);
+  const user = params.get("user") || "hyghman";
+  const customColor = decodeURIComponent(params.get("color") || "#00ffaa");
 
-  const fetchKickUser = async () => {
+  // === Fetch followers & user ===
+  const fetchFollowers = useCallback(async () => {
     try {
-      const res = await fetch(`https://kick.com/api/v1/channels/${username}`);
+      const res = await fetch(`https://kick.com/api/v1/channels/${user}`);
       const data = await res.json();
       setFollowers(data.followersCount);
       setProfilePic(data.user.profile_pic);
     } catch (err) {
-      console.error("User not found", err);
-    } finally {
-      setLoading(false);
+      console.error("Failed to fetch channel data", err);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    fetchFollowers();
+    const interval = setInterval(fetchFollowers, 10000);
+    return () => clearInterval(interval);
+  }, [fetchFollowers]);
+
+  // === Detect follow/unfollow + animations ===
+  useEffect(() => {
+    if (followers === 0 && previousFollowers === 0) return;
+
+    if (followers > previousFollowers) {
+      // FOLLOW -> bule verzi
+      setAuraColor(`${customColor}80`);
+      spawnBubbles(`${customColor}`);
+      triggerFlash("green");
+    } else if (followers < previousFollowers) {
+      // UNFOLLOW -> bule roșii
+      setAuraColor("rgba(255, 60, 60, 0.6)");
+      spawnBubbles("rgba(255, 60, 60, 0.9)");
+      triggerFlash("red");
+    }
+
+    const timer = setTimeout(() => setAuraColor(`${customColor}40`), 1200);
+    setPreviousFollowers(followers);
+    return () => clearTimeout(timer);
+  }, [followers, previousFollowers, customColor]);
+
+  const triggerFlash = (type) => {
+    setFlash(type);
+    setTimeout(() => setFlash(false), 400);
+  };
+
+  // === Bubble spawn ===
+  const spawnBubbles = (color) => {
+    if (!numberRef.current) return;
+    const rect = numberRef.current.getBoundingClientRect();
+
+    for (let i = 0; i < 20; i++) {
+      const id = Math.random().toString(36).substring(2, 9);
+      const offsetX = rect.left + Math.random() * rect.width;
+      const offsetY = rect.top + Math.random() * rect.height;
+      const size = 6 + Math.random() * 14;
+      const duration = 2 + Math.random() * 2;
+      const directionX = (Math.random() - 0.5) * 150;
+      const directionY = -200 - Math.random() * 100;
+
+      const bubble = {
+        id,
+        color,
+        x: offsetX,
+        y: offsetY,
+        size,
+        duration,
+        directionX,
+        directionY,
+      };
+
+      setBubbles((prev) => [...prev, bubble]);
+      setTimeout(() => {
+        setBubbles((prev) => prev.filter((b) => b.id !== id));
+      }, duration * 1000);
     }
   };
 
-  useEffect(() => {
-    fetchKickUser();
-    const interval = setInterval(fetchKickUser, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  if (loading) {
-    return (
-      <div
-        style={{
-          background: "transparent",
-          fontFamily: font,
-          color: color,
-          textAlign: "center",
-          fontSize: "32px",
-          paddingTop: "20vh",
-        }}
-      >
-        Loading...
-      </div>
-    );
-  }
-
-  const remaining = goal - followers;
-  const progress = Math.min((followers / goal) * 100, 100);
-  const goalReached = remaining <= 0;
-
   return (
-    <div
-      style={{
-        background: "transparent",
-        color: color,
-        fontFamily: font,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-        textAlign: "center",
-      }}
-    >
-      {/* Profile Picture */}
-      {showPfp && profilePic && (
-        <img
-          src={profilePic}
-          alt="profile"
-          style={{
-            width: "120px",
-            height: "120px",
-            borderRadius: "50%",
-            marginBottom: "20px",
-            boxShadow: `0 0 20px ${color}`,
-          }}
-        />
+    <div className="overlay-container" style={{ "--main-color": customColor }}>
+      {/* Cinematic aura */}
+      <div
+        className={`aura ${flash ? "aura-flash" : ""}`}
+        style={{
+          background: `radial-gradient(circle, ${
+            auraColor || `${customColor}40`
+          }, transparent 70%)`,
+        }}
+      ></div>
+
+      {/* Profile picture */}
+      {profilePic && (
+        <img src={profilePic} alt="pfp" className="pfp" draggable="false" />
       )}
 
-      {/* Followers Counter */}
+      {/* Followers count */}
       <div
-        style={{
-          fontSize: "64px",
-          fontWeight: "700",
-          color: color,
-          textShadow: `0 0 10px ${color}`,
-          lineHeight: "1.1",
-        }}
+        ref={numberRef}
+        className={`followers-count ${flash ? `flash-${flash}` : ""}`}
       >
         {followers.toLocaleString()}
       </div>
 
-      <div
-        style={{
-          fontSize: "22px",
-          fontWeight: "600",
-          color: "#fff",
-          opacity: 0.9,
-          marginBottom: useGoal ? "10px" : "0",
-        }}
-      >
-        followers
-      </div>
-
-      {/* GOAL BAR */}
-      {useGoal && (
-        <div
-          style={{
-            position: "relative",
-            width: "60%",
-            height: "30px",
-            background: "#111",
-            borderRadius: "15px",
-            marginTop: "20px",
-            overflow: "hidden",
-            border: `2px solid ${goalColor}`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontFamily: font,
-            fontWeight: "700",
-            fontSize: "14px",
-            color: "#fff",
-            textShadow: "0 0 8px rgba(0,0,0,0.8)",
-          }}
-        >
-          {/* Progress bar */}
+      {/* Bubble layer */}
+      <div className="bubble-layer">
+        {bubbles.map((b) => (
           <div
+            key={b.id}
+            className="bubble"
             style={{
-              height: "100%",
-              width: `${progress}%`,
-              background: color,
-              transition: "width 0.8s ease",
-              position: "absolute",
-              left: 0,
-              top: 0,
+              left: `${b.x}px`,
+              top: `${b.y}px`,
+              width: `${b.size}px`,
+              height: `${b.size}px`,
+              backgroundColor: b.color,
+              animationDuration: `${b.duration}s`,
+              "--dx": `${b.directionX}px`,
+              "--dy": `${b.directionY}px`,
             }}
           />
-
-          {/* Text inside the bar */}
-          <span
-            style={{
-              zIndex: 2,
-              color: "#fff",
-              textAlign: "center",
-              width: "100%",
-              textShadow: "0 0 6px rgba(0,0,0,0.7)",
-            }}
-          >
-            {goalReached
-              ? "🎉 Goal reached!"
-              : `🎯 ${remaining.toLocaleString()} left`}
-          </span>
-        </div>
-      )}
+        ))}
+      </div>
     </div>
   );
 }
-
-export default Overlay;
