@@ -11,59 +11,89 @@
   --main-color: #00ffaa;
 }
 
+/* === PROFIL PIC FĂRĂ GLOW, DOAR DROP SHADOW === */
 .pfp {
   width: 120px;
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: 0 0 25px var(--main-color);
   margin-bottom: 25px;
   z-index: 3;
+  opacity: 0;
+  animation: fadeInPic 1.2s ease forwards;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6); /* drop shadow subtil */
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* Număr cu drop shadow subtil */
+.pfp:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75);
+}
+
+@keyframes fadeInPic {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* === FOLLOWER COUNTER === */
 .followers-count {
   font-family: "Poppins", sans-serif;
   font-size: 5rem;
   font-weight: 700;
   color: var(--main-color);
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  position: relative;
   z-index: 3;
   transition: transform 0.2s ease, text-shadow 0.3s ease;
 }
 
-/* FLASH EFFECTS */
-.flash-green {
-  animation: flashGreen 0.4s ease;
-}
-.flash-red {
-  animation: flashRed 0.4s ease;
+.followers-count.no-pfp {
+  margin-top: -40px;
 }
 
-@keyframes flashGreen {
-  0% {
-    text-shadow: 0 4px 12px rgba(0, 255, 150, 0.6);
-    transform: scale(1.05);
-  }
-  100% {
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-    transform: scale(1);
-  }
+/* === GOAL BAR === */
+.goal-container {
+  margin-top: 30px;
+  width: 420px;
+  height: 32px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  position: relative;
 }
 
-@keyframes flashRed {
-  0% {
-    text-shadow: 0 4px 12px rgba(255, 60, 60, 0.6);
-    transform: scale(1.05);
-  }
-  100% {
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-    transform: scale(1);
-  }
+.goal-bar {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
 }
 
-/* AURA cinematică */
+.goal-progress {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  transition: width 0.8s ease;
+}
+
+.goal-text {
+  position: relative;
+  z-index: 2;
+}
+
+/* === AURA CINEMATICĂ === */
 .aura {
   position: absolute;
   top: 50%;
@@ -89,7 +119,7 @@
   }
 }
 
-/* BULE */
+/* === BULE === */
 .bubble-layer {
   position: fixed;
   top: 0;

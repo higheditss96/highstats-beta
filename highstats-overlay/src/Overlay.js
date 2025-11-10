@@ -14,6 +14,12 @@ export default function Overlay() {
   const params = new URLSearchParams(window.location.search);
   const user = params.get("user") || "hyghman";
   const customColor = decodeURIComponent(params.get("color") || "#00ffaa");
+  const showProfile =
+    params.get("showProfilePicture") === "true" ||
+    params.get("showProfilePicture") === "yes";
+  const useGoal =
+    params.get("useGoal") === "true" || params.get("useGoal") === "yes";
+  const goal = parseInt(params.get("goal")) || 10000;
 
   // === Fetch followers & user ===
   const fetchFollowers = useCallback(async () => {
@@ -38,12 +44,10 @@ export default function Overlay() {
     if (followers === 0 && previousFollowers === 0) return;
 
     if (followers > previousFollowers) {
-      // FOLLOW -> bule verzi
       setAuraColor(`${customColor}80`);
       spawnBubbles(`${customColor}`);
       triggerFlash("green");
     } else if (followers < previousFollowers) {
-      // UNFOLLOW -> bule roșii
       setAuraColor("rgba(255, 60, 60, 0.6)");
       spawnBubbles("rgba(255, 60, 60, 0.9)");
       triggerFlash("red");
@@ -91,9 +95,11 @@ export default function Overlay() {
     }
   };
 
+  const progress = Math.min((followers / goal) * 100, 100);
+
   return (
     <div className="overlay-container" style={{ "--main-color": customColor }}>
-      {/* Cinematic aura */}
+      {/* Aura cinematică */}
       <div
         className={`aura ${flash ? "aura-flash" : ""}`}
         style={{
@@ -103,18 +109,39 @@ export default function Overlay() {
         }}
       ></div>
 
-      {/* Profile picture */}
-      {profilePic && (
+      {/* Profile Picture */}
+      {showProfile && profilePic && (
         <img src={profilePic} alt="pfp" className="pfp" draggable="false" />
       )}
 
       {/* Followers count */}
       <div
         ref={numberRef}
-        className={`followers-count ${flash ? `flash-${flash}` : ""}`}
+        className={`followers-count ${flash ? `flash-${flash}` : ""} ${
+          showProfile ? "" : "no-pfp"
+        }`}
       >
         {followers.toLocaleString()}
       </div>
+
+      {/* GOAL BAR */}
+      {useGoal && (
+        <div className="goal-container">
+          <div className="goal-bar">
+            <div
+              className="goal-progress"
+              style={{
+                width: `${progress}%`,
+                backgroundColor: customColor,
+              }}
+            >
+              <span className="goal-text">
+                {followers.toLocaleString()} / {goal.toLocaleString()}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Bubble layer */}
       <div className="bubble-layer">

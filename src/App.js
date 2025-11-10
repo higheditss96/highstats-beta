@@ -15,13 +15,12 @@ function App() {
 
   const presetUsers = ["hyghman", "anduu14", "ket_14", "godeanuu"];
 
-  // Fetch Kick user data
   const fetchKickUser = async (user = username) => {
     try {
       const res = await fetch(`https://kick.com/api/v1/channels/${user}`);
       const data = await res.json();
       setFollowers(data.followersCount);
-      setProfilePic(data.user.profile_pic);
+      setProfilePic(data.user?.profile_pic || "");
     } catch (err) {
       console.error("User not found", err);
       setFollowers(0);
@@ -29,19 +28,16 @@ function App() {
     }
   };
 
-  // Load initial data
   useEffect(() => {
     fetchKickUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Open overlay (vercel)
   const handleOverlayOpen = () => {
-    const overlayUrl = `https://highstatsss-overlay.vercel.app/?user=${username}&color=${encodeURIComponent(
-      color
-    )}&font=${encodeURIComponent(
+    const overlayUrl = `https://highstatsss-overlay.vercel.app/?user=${encodeURIComponent(
+      username
+    )}&color=${encodeURIComponent(color)}&font=${encodeURIComponent(
       font
-    )}&useGoal=${useGoal}&goal=${goal}&showPfp=${showPfp}&goalColor=${encodeURIComponent(
+    )}&useGoal=${useGoal}&goal=${goal}&showProfilePicture=${showPfp}&goalColor=${encodeURIComponent(
       goalColor
     )}`;
     window.open(overlayUrl, "_blank");
@@ -53,7 +49,7 @@ function App() {
         HIGHSTATS <span className="beta-tag">beta</span>
       </header>
 
-      <div className="content">
+      <div className="content-3col">
         {/* ==== LEFT CARD ==== */}
         <div className="card same-size">
           <div className="search-container">
@@ -75,7 +71,6 @@ function App() {
             </button>
           </div>
 
-          {/* Preset usernames */}
           <div className="presets">
             {presetUsers.map((user) => (
               <button
@@ -92,12 +87,10 @@ function App() {
             ))}
           </div>
 
-          {/* Profile preview */}
           {showPfp && profilePic && (
             <img src={profilePic} alt="pfp" className="profile-pic" />
           )}
 
-          {/* Preview area */}
           <div
             className="preview-box"
             style={{
@@ -113,6 +106,7 @@ function App() {
                 fontFamily: font,
                 fontWeight: 700,
                 color: color,
+                textShadow: "0 2px 6px rgba(0,0,0,0.4)",
               }}
             >
               {followers.toLocaleString()}
@@ -120,23 +114,48 @@ function App() {
             <div className="preview-sub">followers</div>
 
             {useGoal && (
-              <div
-                className="preview-goal"
-                style={{
-                  marginTop: "8px",
-                  color: goalColor,
-                  fontWeight: 700,
-                  fontSize: "14px",
-                }}
-              >
-                🎯 {Math.max(goal - followers, 0).toLocaleString()} left to{" "}
-                {goal.toLocaleString()}
+              <div className="goal-preview-container">
+                <div
+                  className="goal-bar"
+                  style={{
+                    height: "18px",
+                    width: "80%",
+                    margin: "8px auto",
+                    background: "#1a1a1a",
+                    borderRadius: "12px",
+                    overflow: "hidden",
+                    boxShadow: "inset 0 0 6px rgba(0,0,0,0.5)",
+                  }}
+                >
+                  <div
+                    className="goal-progress"
+                    style={{
+                      height: "100%",
+                      width: `${Math.min(
+                        (followers / goal) * 100,
+                        100
+                      ).toFixed(1)}%`,
+                      backgroundColor: goalColor,
+                      borderRadius: "12px 0 0 12px",
+                      transition: "width 0.5s ease",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "12px",
+                      fontWeight: "600",
+                      color: "#fff",
+                      textShadow: "0 1px 3px rgba(0,0,0,0.4)",
+                    }}
+                  >
+                    {followers.toLocaleString()} / {goal.toLocaleString()}
+                  </div>
+                </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* ==== RIGHT CARD ==== */}
+        {/* ==== MIDDLE CARD ==== */}
         <div className="card same-size">
           <h2>Generate OBS Overlay</h2>
 
@@ -210,6 +229,72 @@ function App() {
           <button onClick={handleOverlayOpen} className="generate-btn">
             Open OBS Overlay
           </button>
+        </div>
+
+        {/* ==== RIGHT PREVIEW CARD ==== */}
+        <div className="card same-size preview-card">
+          <h2>Overlay Preview</h2>
+          <div
+            className="overlay-preview-box"
+            style={{
+              background: "#0f0f0f",
+              borderRadius: "14px",
+              padding: "25px",
+              textAlign: "center",
+              fontFamily: font,
+              color: color,
+              boxShadow: "0 0 25px rgba(0,0,0,0.3)",
+              marginTop: "15px",
+            }}
+          >
+            {showPfp && profilePic && (
+              <img
+                src={profilePic}
+                alt="pfp"
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  borderRadius: "50%",
+                  marginBottom: "15px",
+                  boxShadow: `0 0 20px ${color}50`,
+                }}
+              />
+            )}
+            <div
+              style={{
+                fontSize: "38px",
+                fontWeight: "bold",
+                textShadow: "0 2px 4px rgba(0,0,0,0.4)",
+              }}
+            >
+              {followers.toLocaleString()}
+            </div>
+            {useGoal && (
+              <div
+                style={{
+                  height: "14px",
+                  width: "100%",
+                  background: "#222",
+                  borderRadius: "10px",
+                  overflow: "hidden",
+                  marginTop: "12px",
+                }}
+              >
+                <div
+                  style={{
+                    width: `${Math.min(
+                      (followers / goal) * 100,
+                      100
+                    ).toFixed(1)}%`,
+                    background: goalColor,
+                    height: "100%",
+                    borderRadius: "10px",
+                    transition: "width 0.4s ease",
+                  }}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
