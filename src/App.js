@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "./App.css";
 
 function App() {
@@ -15,22 +15,27 @@ function App() {
 
   const presetUsers = ["hyghman", "anduu14", "ket_14", "godeanuu"];
 
-  const fetchKickUser = async (user = username) => {
-    try {
-      const res = await fetch(`https://kick.com/api/v1/channels/${user}`);
-      const data = await res.json();
-      setFollowers(data.followersCount);
-      setProfilePic(data.user?.profile_pic || "");
-    } catch (err) {
-      console.error("User not found", err);
-      setFollowers(0);
-      setProfilePic("");
-    }
-  };
+  // 🧩 Fix: memorăm funcția pentru ESLint + Vercel CI
+  const fetchKickUser = useCallback(
+    async (userToFetch = username) => {
+      try {
+        const res = await fetch(`https://kick.com/api/v1/channels/${userToFetch}`);
+        const data = await res.json();
+        setFollowers(data.followersCount);
+        setProfilePic(data.user?.profile_pic || "");
+      } catch (err) {
+        console.error("User not found", err);
+        setFollowers(0);
+        setProfilePic("");
+      }
+    },
+    [username]
+  );
 
+  // 🧩 useEffect cu dependența corectă
   useEffect(() => {
     fetchKickUser();
-  }, []);
+  }, [fetchKickUser]);
 
   const handleOverlayOpen = () => {
     const overlayUrl = `https://highstatsss-overlay.vercel.app/?user=${encodeURIComponent(
@@ -256,7 +261,7 @@ function App() {
                   height: "80px",
                   borderRadius: "50%",
                   marginBottom: "15px",
-                  boxShadow: `0 0 20px ${color}50`,
+                  boxShadow: `0 6px 18px rgba(0,0,0,0.6)`,
                 }}
               />
             )}
