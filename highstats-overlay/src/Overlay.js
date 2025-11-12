@@ -1,172 +1,177 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
-import "./Overlay.css";
+// === HIGHSTATS OVERLAY ===
+// autor: @hyghman edition 💚
+// afiseaza numarul de followers si ultimul follower de pe Kick
 
-export default function Overlay() {
-  const [followers, setFollowers] = useState(0);
-  const [previousFollowers, setPreviousFollowers] = useState(0);
-  const [profilePic, setProfilePic] = useState("");
-  const [auraColor, setAuraColor] = useState("");
-  const [bubbles, setBubbles] = useState([]);
-  const [flash, setFlash] = useState(false);
-  const numberRef = useRef(null);
+const params = new URLSearchParams(window.location.search);
+const username = params.get("user") || "hyghman";
+const color = params.get("color") || "#00ffaa";
+const font = params.get("font") || "Poppins";
 
-  // === URL PARAMS ===
-  const params = new URLSearchParams(window.location.search);
-  const user = params.get("user") || "hyghman";
-  const customColor = decodeURIComponent(params.get("color") || "#00ffaa");
-  const showProfile =
-    params.get("showProfilePicture") === "true" ||
-    params.get("showProfilePicture") === "yes";
-  const useGoal =
-    params.get("useGoal") === "true" || params.get("useGoal") === "yes";
-  const goal = parseInt(params.get("goal")) || 10000;
+document.body.style.setProperty("--main-color", color);
+document.body.style.fontFamily = font;
 
-  // === FETCH FOLLOWERS ===
-  const fetchFollowers = useCallback(async () => {
-    try {
-      const res = await fetch(`https://kick.com/api/v1/channels/${user}`);
-      const data = await res.json();
-      setFollowers(data.followersCount);
-      setProfilePic(data.user?.profile_pic || "");
-    } catch (err) {
-      console.error("Failed to fetch channel data", err);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    fetchFollowers();
-    const interval = setInterval(fetchFollowers, 10000);
-    return () => clearInterval(interval);
-  }, [fetchFollowers]);
-
-  // === DETECT FOLLOW / UNFOLLOW ===
-  useEffect(() => {
-    if (followers === 0 && previousFollowers === 0) return;
-
-    if (followers > previousFollowers) {
-      // follow = verde
-      setAuraColor(`${customColor}80`);
-      spawnBubbles(`${customColor}`);
-      triggerFlash("green");
-    } else if (followers < previousFollowers) {
-      // unfollow = roșu
-      setAuraColor("rgba(255, 60, 60, 0.6)");
-      spawnBubbles("rgba(255, 60, 60, 0.9)");
-      triggerFlash("red");
-    }
-
-    const timer = setTimeout(() => setAuraColor(`${customColor}40`), 1200);
-    setPreviousFollowers(followers);
-    return () => clearTimeout(timer);
-  }, [followers, previousFollowers, customColor]);
-
-  // === FLASH EFFECT ===
-  const triggerFlash = (type) => {
-    setFlash(type);
-    setTimeout(() => setFlash(false), 400);
-  };
-
-  // === SPAWN BUBBLES ===
-  const spawnBubbles = (color) => {
-    if (!numberRef.current) return;
-    const rect = numberRef.current.getBoundingClientRect();
-
-    for (let i = 0; i < 20; i++) {
-      const id = Math.random().toString(36).substring(2, 9);
-      const offsetX = rect.left + Math.random() * rect.width;
-      const offsetY = rect.top + Math.random() * rect.height;
-      const size = 6 + Math.random() * 14;
-      const duration = 2 + Math.random() * 2;
-      const directionX = (Math.random() - 0.5) * 150;
-      const directionY = -200 - Math.random() * 100;
-
-      const bubble = {
-        id,
-        color,
-        x: offsetX,
-        y: offsetY,
-        size,
-        duration,
-        directionX,
-        directionY,
-      };
-
-      setBubbles((prev) => [...prev, bubble]);
-      setTimeout(
-        () => setBubbles((prev) => prev.filter((b) => b.id !== id)),
-        duration * 1000
-      );
-    }
-  };
-
-  // === PROGRESS PENTRU GOAL ===
-  const progress = Math.min((followers / goal) * 100, 100);
-
-  return (
-    <div
-      className="overlay-container"
-      style={{ "--main-color": customColor, "--goal-color": customColor }}
-    >
-      {/* === AURA === */}
-      <div
-        className={`aura ${flash ? "aura-flash" : ""}`}
-        style={{
-          background: `radial-gradient(circle, ${
-            auraColor || `${customColor}40`
-          }, transparent 70%)`,
-        }}
-      ></div>
-
-      {/* === PROFILE PICTURE === */}
-      {showProfile && profilePic && (
-        <img src={profilePic} alt="pfp" className="pfp" draggable="false" />
-      )}
-
-      {/* === FOLLOWER COUNT === */}
-      <div
-        ref={numberRef}
-        className={`followers-count ${flash ? `flash-${flash}` : ""} ${
-          showProfile ? "" : "no-pfp"
-        }`}
-      >
-        {followers.toLocaleString()}
-      </div>
-
-      {/* === GOAL BAR === */}
-      {useGoal && (
-        <div className="goal-container">
-          <div
-            className="goal-bar"
-            style={{
-              width: `${progress}%`,
-              backgroundColor: customColor,
-            }}
-          ></div>
-          <div className="goal-text">
-            {followers.toLocaleString()} / {goal.toLocaleString()}
-          </div>
-        </div>
-      )}
-
-      {/* === BUBBLE LAYER === */}
-      <div className="bubble-layer">
-        {bubbles.map((b) => (
-          <div
-            key={b.id}
-            className="bubble"
-            style={{
-              left: `${b.x}px`,
-              top: `${b.y}px`,
-              width: `${b.size}px`,
-              height: `${b.size}px`,
-              backgroundColor: b.color,
-              animationDuration: `${b.duration}s`,
-              "--dx": `${b.directionX}px`,
-              "--dy": `${b.directionY}px`,
-            }}
-          />
-        ))}
+// === STRUCTURA HTML ===
+document.body.innerHTML = `
+  <div class="overlay-container">
+    <div class="channel-info">
+      <img class="channel-avatar" src="" alt="Avatar" />
+      <div class="details">
+        <h2 class="username">Loading...</h2>
+        <p class="followers-count">Followers: <strong>0</strong></p>
       </div>
     </div>
-  );
+
+    <div class="last-follower">
+      <img class="last-follower-pfp" src="" alt="Follower" />
+      <span>Last Follower:</span>
+      <strong>Loading...</strong>
+    </div>
+  </div>
+`;
+
+// === ELEMENTE ===
+const avatar = document.querySelector(".channel-avatar");
+const usernameEl = document.querySelector(".username");
+const followersEl = document.querySelector(".followers-count strong");
+const lastFollowerPfp = document.querySelector(".last-follower-pfp");
+const lastFollowerName = document.querySelector(".last-follower strong");
+
+// === FUNCTII DE FETCH ===
+async function fetchChannelInfo() {
+  try {
+    const res = await fetch(`/api/channel-info?user=${username}`);
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || "Kick API error");
+
+    avatar.src = data.avatar || "https://cdn.kick.com/images/default-avatar.png";
+    usernameEl.textContent = data.username;
+    followersEl.textContent = data.followers ?? 0;
+  } catch (err) {
+    console.warn("❌ Eroare la channel-info:", err.message);
+    usernameEl.textContent = "Channel Not Found";
+    followersEl.textContent = "N/A";
+  }
 }
+
+async function fetchLastFollower() {
+  try {
+    const res = await fetch(`/api/last-follower?user=${username}`);
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || "Kick API error");
+
+    lastFollowerPfp.src = data.avatar || "https://cdn.kick.com/images/default-avatar.png";
+    lastFollowerName.textContent = data.username;
+  } catch (err) {
+    console.warn("❌ Eroare la last-follower:", err.message);
+    lastFollowerName.textContent = "N/A";
+  }
+}
+
+// === ACTUALIZARE PERIODICA ===
+async function refreshOverlay() {
+  await Promise.all([fetchChannelInfo(), fetchLastFollower()]);
+}
+
+// Prima încărcare
+refreshOverlay();
+
+// Actualizare la fiecare 10 secunde
+setInterval(refreshOverlay, 10000);
+
+// === ANIMATII DE EFECT ===
+const style = document.createElement("style");
+style.textContent = `
+  body {
+    background: transparent;
+    color: white;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: "${font}", sans-serif;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .overlay-container {
+    animation: fadeIn 0.8s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .channel-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .channel-avatar {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: 3px solid var(--main-color);
+    box-shadow: 0 0 10px var(--main-color);
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .channel-avatar:hover {
+    transform: scale(1.05);
+  }
+
+  .details {
+    text-align: left;
+  }
+
+  .username {
+    margin: 0;
+    font-size: 1.5rem;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  }
+
+  .followers-count {
+    font-size: 1rem;
+    opacity: 0.9;
+  }
+
+  .last-follower {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+
+  .last-follower-pfp {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--main-color);
+    filter: drop-shadow(0 0 6px var(--main-color));
+    object-fit: cover;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .last-follower:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 10px var(--main-color));
+  }
+
+  .last-follower:hover .last-follower-pfp {
+    transform: scale(1.1);
+    box-shadow: 0 0 16px var(--main-color);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+`;
+document.head.appendChild(style);

@@ -12,23 +12,23 @@
   --main-color: #00ffaa;
 }
 
-/* === PROFIL PIC FĂRĂ GLOW, DOAR DROP SHADOW === */
+/* === PROFIL PIC === */
 .pfp {
-  width: 120px;
-  height: 120px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 25px;
+  margin-bottom: 12px;
   z-index: 3;
   opacity: 0;
   animation: fadeInPic 1.2s ease forwards;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .pfp:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.7);
 }
 
 @keyframes fadeInPic {
@@ -42,29 +42,29 @@
   }
 }
 
-/* === FOLLOWER COUNTER === */
+/* === FOLLOWER COUNT === */
 .followers-count {
   font-family: "Poppins", sans-serif;
-  font-size: 5rem;
+  font-size: 4.2rem;
   font-weight: 700;
   color: var(--main-color);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   z-index: 3;
   transition: transform 0.2s ease, text-shadow 0.3s ease;
+  margin-bottom: 8px;
 }
 
 .followers-count.no-pfp {
-  margin-top: -40px;
+  margin-top: -20px;
 }
 
-/* === GOAL BAR (FIXED ANIMATIE) === */
+/* === GOAL BAR === */
 .goal-container {
-  margin-top: 25px;
-  width: 420px;
-  height: 28px;
+  width: 360px;
+  height: 30px;
   border-radius: 50px;
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.35);
   overflow: hidden;
   position: relative;
 }
@@ -77,54 +77,104 @@
   width: 0%;
   border-radius: 50px;
   background: var(--goal-color, #00ffaa);
-  transition: width 1.2s ease-in-out;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  font-size: 1rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: width 1s ease-in-out;
 }
 
-/* Textul (numerele) în interiorul barei */
+/* Textul (numerele) centrat */
 .goal-text {
-  position: relative;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   z-index: 3;
-  color: #fff;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-  font-weight: 600;
-  font-size: 1rem;
   user-select: none;
+  white-space: nowrap;
 }
 
-/* === AURA CINEMATICĂ === */
+/* === AURA === */
 .aura {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 260px;
-  height: 260px;
+  width: 220px;
+  height: 220px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  filter: blur(40px);
+  filter: blur(30px);
   z-index: 0;
+  opacity: 0.2;
   transition: background 0.5s ease;
-  animation: auraFloat 5s ease-in-out infinite alternate;
+  animation: auraFloat 6s ease-in-out infinite alternate;
 }
 
 @keyframes auraFloat {
   0% {
     transform: translate(-50%, -50%) scale(1);
-    opacity: 0.9;
   }
   100% {
-    transform: translate(-50%, -52%) scale(1.07);
-    opacity: 0.75;
+    transform: translate(-50%, -52%) scale(1.05);
   }
 }
 
-/* === BULE (FOLLOW/UNFOLLOW) === */
+/* === LAST FOLLOWER === */
+.last-follower {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+  color: #ffffff;
+  font-family: "Poppins", sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.4); /* doar drop shadow */
+  animation: fadeInFollower 0.6s ease-in-out;
+  z-index: 5;
+}
+
+.last-follower span {
+  opacity: 0.8;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.last-follower strong {
+  color: #ffffff;
+  font-weight: 700;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* drop shadow pe text */
+}
+
+.last-follower-pfp {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6); /* doar umbră, fără glow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.last-follower:hover .last-follower-pfp {
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes fadeInFollower {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* === BULE === */
 .bubble-layer {
   position: fixed;
   top: 0;
@@ -155,5 +205,35 @@
   100% {
     transform: translate(var(--dx), var(--dy)) scale(0.5);
     opacity: 0;
+  }
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .followers-count {
+    font-size: 2.8rem;
+  }
+
+  .pfp {
+    width: 70px;
+    height: 70px;
+  }
+
+  .goal-container {
+    width: 85%;
+    height: 24px;
+  }
+
+  .goal-text {
+    font-size: 1rem;
+  }
+
+  .last-follower {
+    font-size: 1rem;
+  }
+
+  .last-follower-pfp {
+    width: 28px;
+    height: 28px;
   }
 }
